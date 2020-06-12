@@ -38,11 +38,7 @@ export default class App extends Component {
 	}
 
 	setOperation = operation => {
-		console.log(this.state.current)
 		if(this.state.current === 0){
-			if(operation === '%'){
-				this.setState({operation: '/', values: [this.state.values[0], 100]})
-			}
 			this.setState({operation, current: 1, clearDisplay: true})
 		} else {
 			const equals = operation === '='
@@ -65,14 +61,40 @@ export default class App extends Component {
 		}
 	}
 
+	specialOperation = operation => {
+		const values = [...this.state.values]
+
+		if(operation === '%'){
+			values[0] = eval(`${values[0]} / 100`)
+			console.log(values)
+			this.setState({
+				displayValue: values[0],
+				operation: null,
+				current: 1,
+				clearDisplay: false,
+				values
+			})
+		} else if (operation === '±') {
+			values[0] = eval(`${values[0]} * -1`)
+			console.log(values)
+			this.setState({
+				displayValue: values[0],
+				operation: null,
+				current: 1,
+				clearDisplay: false,
+				values
+			})
+		}
+	}
+
 	render(){
 		return (
 			<View style={styles.container}>
 				<Display value={this.state.displayValue}></Display>
 				<View style={styles.buttons}>
 					<Button label='AC'onClick={this.clearMemory} />
-					<Button label='±' onClick={() => this.setOperation('±')}/>
-					<Button label='%' onClick={() => this.setOperation('%')}/>
+					<Button label='±' onClick={() => this.specialOperation('±')}/>
+					<Button label='%' onClick={() => this.specialOperation('%')}/>
 					<Button label='÷' onClick={() => this.setOperation('/')} operation={true}/>
 					<Button label='7' onClick={() => this.addDigit('7')}/>
 					<Button label='8' onClick={() => this.addDigit('8')}/>
